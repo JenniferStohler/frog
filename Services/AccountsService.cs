@@ -1,30 +1,25 @@
-using System;
+using frog.Models;
+using frog.Repositories;
 
 namespace frog.Services
 {
-  public class AccountsServices
+  public class AccountsService
   {
-    private readonly AccountsRepository _rep;
+    private readonly AccountsRepository _repo;
 
-    public AccountsServices(AccountsRepository repository) => _repo = repository;
+    public AccountsService(AccountsRepository repo)
+    {
+      _repo = repo;
+    }
 
     internal Account GetOrCreateAccount(Account userInfo)
     {
-      throw new NotImplementedException();
+      Account account = _repo.GetById(userInfo.Id);
+      if (account == null)
+      {
+        return _repo.Create(userInfo);
+      }
+      return account;
     }
-  }
-
-  internal class AccountsRepository
-  {
-  }
-
-  internal class Account GetOrCreateAccount(Account userInfo)
-  {
-    Account account = _repo.GetById(userInfo.Id);
-    if (account == null)
-    {
-      return _repo.Create(userInfo);
-    }
-    return account;
   }
 }

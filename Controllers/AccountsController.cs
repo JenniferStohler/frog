@@ -1,44 +1,38 @@
 using System;
 using System.Threading.Tasks;
+using frog.Models;
 using frog.Services;
+using CodeWorks.Auth0Provider;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace frog.Controllers
 {
-  public class AccountsController
+  [ApiController]
+  [Route("[controller]")]
+  [Authorize]
+  public class AccountController : ControllerBase
   {
-    [ApiController]
-    [Route("[controller]")]
-    [Authorize]
+    private readonly AccountsService _service;
 
-    public class AccountsController : ControllerBase
+    public AccountController(AccountsService service)
     {
-      private readonly AccountsServices _service;
+      _service = service;
+    }
 
-      public AccountsController()
+    [HttpGet]
+    public async Task<ActionResult<Account>> Get()
+    {
+      try
       {
+
+        Account userInfo = await HttpContext.GetUserInfoAsync<Account>();
+        Account currentUser = _service.GetOrCreateAccount(userInfo);
+        return Ok(currentUser);
       }
-
-      public AccountsController(AccountsServices service)
+      catch (Exception e)
       {
-        _service = service;
-      }
-
-      [HttpGet]
-
-      public async Task<ActionResult<Account>> GetTask()
-      {
-        try
-        {
-          Account userInfo = await HttpContext.GetUserInfoAsync<Account>();
-          Account currentUser = _service.GetOrCreateAccount(userInfo);
-          return Ok(currentUser);
-        }
-        catch (Exception e)
-        {
-          return BadRequest(e.Message);
-        }
+        return BadRequest(e.Message);
       }
     }
   }

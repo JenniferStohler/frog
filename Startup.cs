@@ -35,7 +35,22 @@ namespace frog
   {
     options.Authority = $"https://{Configuration["Auth0:Domain"]}/";
     options.Audience = Configuration["Auth0:Audience"];
+
   });
+      services.AddCors(options =>
+       {
+         options.AddPolicy("CorsDevPolicy", builder =>
+               {
+                 builder
+                         .WithOrigins(new string[]{
+                          "http://localhost:8080",
+                                "http://localhost:8081"
+                               })
+                               .AllowAnyMethod()
+                               .AllowAnyHeader()
+                               .AllowCredentials();
+               });
+       });
 
       services.AddControllers();
       // NOTE Transient Services
